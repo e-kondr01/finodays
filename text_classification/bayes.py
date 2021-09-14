@@ -15,7 +15,7 @@ def bayes():
         mood_train.append(i[0])
         text_train.append(" ".join(preprocess_text(i[1])))
         j += 1
-        if j == 1000:
+        if j == 5:
             break
 
     model = Pipeline([('vect', CountVectorizer()),
@@ -27,9 +27,13 @@ def bayes():
     data_test = map(lambda it: (it[0], it[1]), get_test_data())
     mood_test: list[int] = []
     text_test: list[str] = []
+    j = 0
     for i in data_test:
         mood_test.append(i[0])
-        text_test.append(preprocess_text(i[1]))
+        text_test.append(" ".join(preprocess_text(i[1])))
+        j += 1
+        if j==5:
+            break
 
     print(model.score(text_test, mood_test))
 
