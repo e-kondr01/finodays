@@ -40,8 +40,8 @@ def lemmatize_en(tokens: List[str]) -> List[str]:
     return res
 
 
-def preprocess_text(text: str, ru: bool = True):
-    """Осуществляет препроцессинг текста"""
+def preprocess_text_en(text: str) -> str:
+    """Осуществляет препроцессинг английского текста"""
     text = text.lower()
     spec_chars = string.punctuation + '\n\xa0«»\t—…'
     text = remove_chars_from_text(text, spec_chars)
@@ -49,19 +49,32 @@ def preprocess_text(text: str, ru: bool = True):
 
     text_tokens = word_tokenize(text)
 
-    # TODO: добавить специфические для банка stop words
-    if ru:
-        stop_words = stopwords.words("russian")
-    else:
-        stop_words = stopwords.words("english")
+    stop_words = stopwords.words("english")
     text_tokens = [
         word for word in text_tokens if word not in stop_words
     ]
 
-    if ru:
-        text_tokens = lemmatize_ru(text_tokens)
-    else:
-        text_tokens = stem_text(text_tokens)
-        text_tokens = lemmatize_en(text_tokens)
+    text_tokens = stem_text(text_tokens)
+    text_tokens = lemmatize_en(text_tokens)
 
-    return text_tokens
+    return " ".join(text_tokens)
+
+
+def preprocess_text_ru(text: str) -> str:
+    """Осуществляет препроцессинг русского текста"""
+    text = text.lower()
+    spec_chars = string.punctuation + '\n\xa0«»\t—…'
+    text = remove_chars_from_text(text, spec_chars)
+    text = remove_chars_from_text(text, string.digits)
+
+    text_tokens = word_tokenize(text)
+
+    stop_words = stopwords.words("russian")
+
+    text_tokens = [
+        word for word in text_tokens if word not in stop_words
+    ]
+
+    text_tokens = lemmatize_ru(text_tokens)
+
+    return " ".join(text_tokens)
