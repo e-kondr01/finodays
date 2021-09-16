@@ -1,42 +1,40 @@
+import pandas as pd
+
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 
-from db.data import get_train_data, get_test_data
-from text_classification.preprocess import preprocess_text
+
+def bayes(X_train, y_train, X_test, y_test) -> Pipeline:
+    """Train Naive Bayes model"""
+    nb = Pipeline([('vect', CountVectorizer(lowercase=False)),
+                   ('tfidf', TfidfTransformer()),
+                   ('clf', MultinomialNB()),
+                   ])
+    nb.fit(X_train, y_train)
+
+    y_pred: Pipeline = nb.predict(X_test)
+
+    return y_pred
 
 
-def bayes():
-    data_train = map(lambda it: (it[0], it[1]), get_train_data())
-    mood_train: list[int] = []
-    text_train: list[str] = []
-    j = 0
-    for i in data_train:
-        mood_train.append(i[0])
-        text_train.append(" ".join(preprocess_text(i[1])))
-        j += 1
-        if j == 5:
-            break
+def score_bayes(csv_filename: str) -> float:
+    """Выводит точность модели Naive Bayes по обучению
+    на датасете"""
+    df = pd.read_csv(csv_filename)
+    X = df.review
+    y = df.sentiment
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=42)
 
-    model = Pipeline([('vect', CountVectorizer()),
-                      ('tfidf', TfidfTransformer()),
-                      ('clf', MultinomialNB()),
-                      ])
-    model.fit(text_train, mood_train)
+    y_pred: Pipeline = bayes(X_train, y_train, X_test, y_test)
 
-    data_test = map(lambda it: (it[0], it[1]), get_test_data())
-    mood_test: list[int] = []
-    text_test: list[str] = []
-    j = 0
-    for i in data_test:
-        mood_test.append(i[0])
-        text_test.append(" ".join(preprocess_text(i[1])))
-        j += 1
-        if j==5:
-            break
-
-    print(model.score(text_test, mood_test))
+    return accuracy_score(y_pred, y_test)
 
 
 if __name__ == "__main__":
-    bayes()
+    accuracy = score_bayes("preprocessed_rureviews.csv")
+    print(accuracy)
+    # 0.7069
