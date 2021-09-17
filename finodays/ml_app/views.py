@@ -95,8 +95,16 @@ class PredictView(views.APIView):
 
         algorithm_object = registry.endpoints[algs[alg_index].id]
         prediction = algorithm_object.compute_prediction(request.data)
+        response = {"result": prediction}
 
-        return Response(prediction)
+        if list(max(prediction, key=lambda it: list(it.values())[0]).keys())[0] == "negative":
+            response["advise"] = "Позовите сотрудника по разрешению конфликтов"
+        elif list(max(prediction, key=lambda it: list(it.values())[0]).keys())[0] == "positive":
+            response["advise"] = "Посоветуйте оценить приложение или другой сервис"
+        else:
+            response["advise"] = "Попросите явно оценить работу"
+
+        return Response(response)
 
 
 class TestPredictView(views.APIView):
