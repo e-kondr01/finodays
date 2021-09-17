@@ -20,7 +20,6 @@ class MLRegistry:
             parent_endpoint=endpoint)
         if algorithm_created:
             status = MLAlgorithmStatus(status=algorithm_status,
-                                       created_by=owner,
                                        parent_mlalgorithm=database_object,
                                        active=True)
             status.save()

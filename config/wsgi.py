@@ -22,6 +22,10 @@ from django.core.wsgi import get_wsgi_application
 
 # This allows easy placement of apps within the interior
 # finodays directory.
+from ml_app.classifiers.logreg import LogRegClassifier
+from finodays.ml_app.registry import MLRegistry
+
+
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent
 sys.path.append(str(ROOT_DIR / "finodays"))
 # We defer to a DJANGO_SETTINGS_MODULE already in the environment. This breaks
@@ -37,20 +41,18 @@ application = get_wsgi_application()
 
 
 # ML registry
-# from finodays.ml_app.classifiers.random_forest import RandomForestClassifier
-# from finodays.ml_app.registry import MLRegistry
-# try:
-#     registry = MLRegistry()  # create ML registry
-#     # Random Forest classifier
-#     rf = RandomForestClassifier()
-#     # add to ML registry
-#     registry.add_algorithm(endpoint_name="income_classifier",
-#                            algorithm_object=rf,
-#                            algorithm_name="random forest",
-#                            algorithm_status="production",
-#                            algorithm_version="0.0.1",
-#                            algorithm_description="Random Forest with simple pre- and post-processing",
-#                            algorithm_code=inspect.getsource(RandomForestClassifier))
+try:
+    registry = MLRegistry()  # create ML registry
+    # Random Forest classifier
+    lr = LogRegClassifier()
+    # add to ML registry
+    registry.add_algorithm(endpoint_name="income_classifier",
+                           algorithm_object=lr,
+                           algorithm_name="logreg",
+                           algorithm_status="production",
+                           algorithm_version="0.0.1",
+                           algorithm_description="LogReg",
+                           algorithm_code=inspect.getsource(LogRegClassifier))
 
-# except Exception as e:
-#     print("Exception while loading the algorithms to the registry,", str(e))
+except Exception as e:
+    print("Exception while loading the algorithms to the registry,", str(e))

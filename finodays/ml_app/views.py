@@ -8,8 +8,8 @@ from rest_framework import viewsets, status, views
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
-#from config.wsgi import registry
-
+# from config.wsgi import registry
+from config.wsgi import registry
 from finodays.ml_app.models import *
 from finodays.ml_app.serializers import *
 from text_classification.preprocess import preprocess_text_ru
@@ -65,8 +65,9 @@ class MLRequestViewSet(
 
 
 class PredictView(views.APIView):
-    def post(self, request, endpoint_name, format=None):
+    def post(self, request, format=None):
 
+        endpoint_name = self.request.query_params.get("endpoint_name")
         algorithm_status = self.request.query_params.get(
             "status", "production")
         algorithm_version = self.request.query_params.get("version")
@@ -94,18 +95,6 @@ class PredictView(views.APIView):
 
         algorithm_object = registry.endpoints[algs[alg_index].id]
         prediction = algorithm_object.compute_prediction(request.data)
-
-        label = prediction["label"] if "label" in prediction else "error"
-        ml_request = MLRequest(
-            input_data=json.dumps(request.data),
-            full_response=prediction,
-            response=label,
-            feedback="",
-            parent_mlalgorithm=algs[alg_index],
-        )
-        ml_request.save()
-
-        prediction["request_id"] = ml_request.id
 
         return Response(prediction)
 
