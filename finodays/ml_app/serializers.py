@@ -1,8 +1,5 @@
 from rest_framework import serializers
-from ml_app.models import Endpoint
-from ml_app.models import MLAlgorithm
-from ml_app.models import MLAlgorithmStatus
-from ml_app.models import MLRequest
+from finodays.ml_app.models import *
 
 
 class EndpointSerializer(serializers.ModelSerializer):

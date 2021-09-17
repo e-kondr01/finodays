@@ -5,20 +5,11 @@ from numpy.random import rand
 from rest_framework import viewsets, status, views
 from rest_framework import mixins
 from rest_framework.response import Response
-
-from config.wsgi import registry
-from ml_app.models import Endpoint
-from ml_app.serializers import EndpointSerializer
-
-from ml_app.models import MLAlgorithm
-from ml_app.serializers import MLAlgorithmSerializer
-
-from ml_app.models import MLAlgorithmStatus
-from ml_app.serializers import MLAlgorithmStatusSerializer
-
-from ml_app.models import MLRequest
-from ml_app.serializers import MLRequestSerializer
 from rest_framework.exceptions import APIException
+#from config.wsgi import registry
+
+from finodays.ml_app.models import *
+from finodays.ml_app.serializers import *
 
 
 class EndpointViewSet(
@@ -58,8 +49,6 @@ class MLAlgorithmStatusViewSet(
                 # set active=False for other statuses
                 deactivate_other_statuses(instance)
 
-
-
         except Exception as e:
             raise APIException(str(e))
 
@@ -75,7 +64,8 @@ class MLRequestViewSet(
 class PredictView(views.APIView):
     def post(self, request, endpoint_name, format=None):
 
-        algorithm_status = self.request.query_params.get("status", "production")
+        algorithm_status = self.request.query_params.get(
+            "status", "production")
         algorithm_version = self.request.query_params.get("version")
 
         algs = MLAlgorithm.objects.filter(parent_endpoint__name=endpoint_name, status__status=algorithm_status,

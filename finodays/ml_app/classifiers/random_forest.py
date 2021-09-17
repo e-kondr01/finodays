@@ -1,13 +1,14 @@
 import joblib
 import pandas as pd
 
-from ml_app.classifiers.classifier import Classifier
+from finodays.ml_app.classifiers.classifier import Classifier
 
 
 class RandomForestClassifier(Classifier):
     def __init__(self):
         path_to_artifacts = "../../research/"
-        self.values_fill_missing =  joblib.load(path_to_artifacts + "train_mode.joblib")
+        self.values_fill_missing = joblib.load(
+            path_to_artifacts + "train_mode.joblib")
         self.encoders = joblib.load(path_to_artifacts + "encoders.joblib")
         self.model = joblib.load(path_to_artifacts + "random_forest.joblib")
 
@@ -21,7 +22,8 @@ class RandomForestClassifier(Classifier):
             "msg",
         ]:
             categorical_convert = self.encoders[column]
-            input_data[column] = categorical_convert.transform(input_data[column])
+            input_data[column] = categorical_convert.transform(
+                input_data[column])
 
         return input_data
 
