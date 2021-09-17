@@ -66,4 +66,7 @@ RUN chmod +x /start
 # copy application code to WORKDIR
 COPY . ${APP_HOME}
 
+COPY ./compose/local/django/download_nltk_resources.py ./download_nltk_resources.py
+RUN python ./download_nltk_resources.py
+
 ENTRYPOINT ["/entrypoint"]

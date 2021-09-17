@@ -13,4 +13,5 @@ router.register(r"mlrequests", MLRequestViewSet, basename="mlrequests")
 
 urlpatterns = [
     url(r"^ml/", include(router.urls)),
+    url("test-predict", TestPredictView.as_view())
 ]

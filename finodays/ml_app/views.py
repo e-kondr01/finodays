@@ -1,6 +1,8 @@
 import json
+import joblib
 
 from django.db import transaction
+from django.conf import settings
 from numpy.random import rand
 from rest_framework import viewsets, status, views
 from rest_framework import mixins
@@ -10,6 +12,7 @@ from rest_framework.exceptions import APIException
 
 from finodays.ml_app.models import *
 from finodays.ml_app.serializers import *
+from text_classification.preprocess import preprocess_text_ru
 
 
 class EndpointViewSet(
@@ -105,3 +108,17 @@ class PredictView(views.APIView):
         prediction["request_id"] = ml_request.id
 
         return Response(prediction)
+
+
+class TestPredictView(views.APIView):
+
+    def post(self, request, *args, **kwargs):
+        text = request.data["text"]
+        text = preprocess_text_ru(text)
+        model = joblib.load(settings.APPS_DIR / "ml_app" / "logreg.joblib")
+        proba = model.predict([text])
+        return Response(
+            {
+                "proba": str(proba)
+            }
+        )
