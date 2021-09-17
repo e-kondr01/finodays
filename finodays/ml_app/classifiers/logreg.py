@@ -3,6 +3,7 @@ import pandas as pd
 
 from django.conf import settings
 from finodays.ml_app.classifiers.classifier import Classifier
+from text_classification.preprocess import preprocess_text_ru
 
 
 class LogRegClassifier(Classifier):
@@ -10,7 +11,7 @@ class LogRegClassifier(Classifier):
         self.model = joblib.load(settings.APPS_DIR / "ml_app" / "logreg.joblib")
 
     def preprocessing(self, input_data):
-        return pd.DataFrame(input_data, index=[0])["text"]
+        return pd.DataFrame({"text": preprocess_text_ru(input_data["text"])}, index=[0])["text"]
 
     def predict(self, input_data):
         return self.model.predict_proba(input_data)[0]
