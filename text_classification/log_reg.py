@@ -10,7 +10,7 @@ def log_reg(X_train, y_train, X_test, y_test) -> Pipeline:
     """Train Logistic Regression model"""
     logreg = Pipeline([('vect', CountVectorizer(lowercase=False)),
                        ('tfidf', TfidfTransformer()),
-                       ('clf', LogisticRegression(n_jobs=1, C=1e5)),
+                       ('clf', LogisticRegression(max_iter=400)),
                        ])
     logreg.fit(X_train, y_train)
 
@@ -23,10 +23,10 @@ def score_log_reg(csv_filename: str) -> float:
     """Выводит точность модели Logistic Regression по обучению
     на датасете"""
     df = pd.read_csv(csv_filename)
-    X = df.text
-    y = df.label
+    X = df.review
+    y = df.sentiment
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.3, random_state=42)
+        X, y, test_size=0.3)
 
     y_pred: Pipeline = log_reg(X_train, y_train, X_test, y_test)
 
@@ -34,7 +34,6 @@ def score_log_reg(csv_filename: str) -> float:
 
 
 if __name__ == "__main__":
-    accuracy = score_log_reg("preprocessed_sentiment.csv")
+    accuracy = score_log_reg("preprocessed_rureviews.csv")
     print(accuracy)
-    #  0.7648
-    #  FIXME: STOP: TOTAL NO. of ITERATIONS REACHED LIMIT
+    #  0.7317
