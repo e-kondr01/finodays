@@ -1,3 +1,4 @@
+import joblib
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.linear_model import LogisticRegression
@@ -31,6 +32,20 @@ def score_log_reg(csv_filename: str) -> float:
     y_pred: Pipeline = log_reg(X_train, y_train, X_test, y_test)
 
     return accuracy_score(y_pred, y_test)
+
+
+def save_log_reg():
+    df = pd.read_csv("preprocessed_rureviews.csv")
+    X = df.review
+    y = df.sentiment
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3)
+    logreg = Pipeline([('vect', CountVectorizer(lowercase=False)),
+                       ('tfidf', TfidfTransformer()),
+                       ('clf', LogisticRegression(max_iter=400)),
+                       ])
+    logreg = logreg.fit(X_train, y_train)
+    joblib.dump(logreg, "./logreg.joblib")
 
 
 if __name__ == "__main__":
