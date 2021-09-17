@@ -13,11 +13,11 @@ class LogRegClassifier(Classifier):
         return pd.DataFrame(input_data, index=[0])["text"]
 
     def predict(self, input_data):
-        return self.model.predict(input_data)
+        return self.model.predict_proba(input_data)[0]
 
     def postprocessing(self, input_data):
-        print(input_data)
-        return input_data
+        classes = self.model.classes_
+        return [{classes[i]: input_data[i]} for i in range(len(input_data))]
 
     def compute_prediction(self, input_data):
         try:
