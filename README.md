@@ -6,6 +6,7 @@
 Для запуска django-приложения:
 
 docker-compose -f local.yml build
+
 docker-compose -f local.yml up
 
 ### Доступные эндпоинты приложения:
@@ -13,7 +14,9 @@ docker-compose -f local.yml up
 #### Предсказание настроения сообщений:
 
 POST: {{host}}/ml/predict
+
     body: 
+    
         {
             "text": "Текст сообщений пользователя"
         }
