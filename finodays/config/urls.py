@@ -6,6 +6,8 @@ from django.views import defaults as default_views
 from django.views.generic import TemplateView
 from rest_framework.authtoken.views import obtain_auth_token
 
+from ml_app.urls import urlpatterns as ml_urlpatterns
+
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
@@ -26,6 +28,8 @@ urlpatterns += [
     # DRF auth token
     path("auth-token/", obtain_auth_token),
 ]
+
+urlpatterns += ml_urlpatterns
 
 if settings.DEBUG:
     # This allows the error pages to be debugged during development, just visit
