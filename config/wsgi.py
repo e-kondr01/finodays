@@ -13,17 +13,11 @@ middleware here, or combine a Django application with an application of another
 framework.
 
 """
-import inspect
 import os
 import sys
 from pathlib import Path
 
 from django.core.wsgi import get_wsgi_application
-
-# This allows easy placement of apps within the interior
-# finodays directory.
-from ml_app.classifiers.logreg import LogRegClassifier
-from finodays.ml_app.registry import MLRegistry
 
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -38,21 +32,3 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.production")
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
 application = get_wsgi_application()
-
-
-# ML registry
-try:
-    registry = MLRegistry()  # create ML registry
-    # Random Forest classifier
-    lr = LogRegClassifier()
-    # add to ML registry
-    registry.add_algorithm(endpoint_name="income_classifier",
-                           algorithm_object=lr,
-                           algorithm_name="logreg",
-                           algorithm_status="production",
-                           algorithm_version="0.0.1",
-                           algorithm_description="LogReg",
-                           algorithm_code=inspect.getsource(LogRegClassifier))
-
-except Exception as e:
-    print("Exception while loading the algorithms to the registry,", str(e))
